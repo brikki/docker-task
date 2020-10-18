@@ -1,0 +1,39 @@
+version: '3.7'
+
+services:
+
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    restart: always
+    env_file:
+      mongo.env
+    volumes:
+      - /data/db:/data/db
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    env_file:
+        mongo.env
+
+  admin-server:
+    image: brikki/admin-server:latest
+    restart: always
+    ports:
+      - "9003:9003"
+    depends_on:
+      - mongo
+      - mongo-express
+
+  client-server:
+    image: brikki/client-server:latest
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongo
+      - mongo-express
